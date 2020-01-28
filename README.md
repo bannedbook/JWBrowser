@@ -8,4 +8,4 @@
 alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=org.mobile.jinwang)
 
 #### License
-GNU General Public License , see http://www.gnu.org/licenses/.
+GNU General Public License.
