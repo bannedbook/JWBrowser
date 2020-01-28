@@ -1,7 +1,7 @@
-# JWBrowser
+# 禁闻浏览器
 
-#### Speed, Simplicity, Security
-![](launcher_icon_small.png)
+#### 一个安卓翻墙浏览器。
+
 
 #### Download
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" 
@@ -12,23 +12,6 @@ alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/det
 
 #### Dev Branch
 * [![Build Status](https://travis-ci.org/anthonycr/Lightning-Browser.svg?branch=dev)](https://travis-ci.org/anthonycr/Lightning-Browser)
-
-#### Features
-* Bookmarks
-
-* History
-
-* Multiple search engines (Google, Bing, Yahoo, StartPage, DuckDuckGo, etc.)
-
-* Incognito mode
-
-* Follows Google design guidelines
-
-* Unique utilization of navigation drawer for tabs
-
-* Google search suggestions
-
-* Orbot Proxy support and I2P support
 
 #### Permissions
 
