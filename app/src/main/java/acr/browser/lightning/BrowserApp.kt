@@ -14,18 +14,23 @@ import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.MemoryLeakUtils
 import acr.browser.lightning.utils.installMultiDex
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.os.Build
+import android.os.Process
 import android.os.StrictMode
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatDelegate
+import com.crashlytics.android.Crashlytics
+import com.github.shadowsocks.Core
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.plugins.RxJavaPlugins
 import javax.inject.Inject
 import kotlin.system.exitProcess
+
 
 class BrowserApp : Application() {
 
@@ -46,6 +51,7 @@ class BrowserApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Core.init(this, MainActivity::class)
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
                 .detectAll()
@@ -56,6 +62,17 @@ class BrowserApp : Application() {
                 .penaltyLog()
                 .build())
         }
+
+        //fix for: Android 9 prohibit sharing WebView data directory among multiple processes
+        //fix for: java.lang.RuntimeException: Unable to create application acr.browser.lightning.BrowserApp: java.lang.RuntimeException: Using WebView from more than one process at once with the same data directory is not supported. https://crbug.com/558377
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val processName = getProcessName(this)
+            val packageName = this.packageName
+            if (packageName != processName) {
+                WebView.setDataDirectorySuffix(processName)
+            }
+        }
+        //fix for Android 9 prohibit sharing WebView data directory end
 
         if (Build.VERSION.SDK_INT >= 28) {
             if (getProcessName() == "$packageName:incognito") {
@@ -112,8 +129,22 @@ class BrowserApp : Application() {
                 MemoryLeakUtils.clearNextServedView(activity, this@BrowserApp)
             }
         })
+
+        //Crashlytics.getInstance().crash() // Force a crash
+        //throw RuntimeException("This is a crash")
     }
 
+
+    private fun getProcessName(context: Context?): String? {
+        if (context == null) return null
+        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (processInfo in manager.runningAppProcesses) {
+            if (processInfo.pid == Process.myPid()) {
+                return processInfo.processName
+            }
+        }
+        return null
+    }
     /**
      * Create the [BuildType] from the [BuildConfig].
      */

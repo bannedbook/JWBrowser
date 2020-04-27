@@ -16,8 +16,6 @@
 -->
 
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-
-    <string name="app_name">Lightning</string>
     <string name="action_new_tab">Nieuw Tabblad</string>
     <string name="action_share">Deel</string>
     <string name="action_history">Geschiedenis</string>
@@ -114,7 +112,7 @@
     <string name="action_manual">Manueel</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contacteer Mij</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">https://www.bannedbook.org</string>
     <string name="clear_cache">Wis cache</string>
     <string name="message_cache_cleared">Cache gewist</string>
     <string name="message_import">Bladwijzers zijn geïmporteerd</string>
@@ -146,6 +144,7 @@
     <string name="powered_by_google">Ondersteund door Google</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
+        <item>JWProxy</item>
         <item>None</item>
         <item>Orbot</item>
         <item>I2P</item>

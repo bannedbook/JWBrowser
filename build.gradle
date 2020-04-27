@@ -1,14 +1,35 @@
+
 buildscript {
-    ext.kotlinVersion = '1.3.50'
+    ext {
+        javaVersion = JavaVersion.VERSION_1_8
+        ext.kotlinVersion = '1.3.50'
+        sdkVersion = 29
+        compileSdkVersion = 29
+        lifecycleVersion = '2.2.0'
+        desugarLibsVersion = '1.0.4'
+        junitVersion = '4.12'
+        androidTestVersion = '1.2.0'
+        androidEspressoVersion = '3.2.0'
+        versionCode = 108
+        versionName = "5.1.5"
+    }
+
     repositories {
         google()
         jcenter()
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:4.0.0-beta04'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.3'
+        classpath 'com.google.android.gms:oss-licenses-plugin:0.9.5'
+        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.8.0'
+        classpath 'io.fabric.tools:gradle:1.31.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
     }
 }
 
@@ -21,7 +42,7 @@ allprojects {
 }
 
 ext {
-    minSdkVersion = 19
+    minSdkVersion = 21
     targetSdkVersion = 29
     buildToolsVersion = '29.0.2'
 }

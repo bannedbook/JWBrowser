@@ -17,7 +17,6 @@
 
 <resources>
 
-    <string name="app_name">Lightning</string>
     <string name="action_new_tab">Új Lap</string>
     <string name="action_share">Megosztás</string>
     <string name="action_history">Előzmények</string>
@@ -114,7 +113,7 @@
     <string name="action_manual">Kézi</string>
     <string name="action_auto">Automata</string>
     <string name="action_follow_me">Vedd fel velem a kapcsolatot</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">https://www.bannedbook.org</string>
     <string name="clear_cache">Gyorsítótár törlése</string>
     <string name="message_cache_cleared">Gyorsítótár törölve</string>
     <string name="message_import">Könyvjelzők importálva</string>
@@ -147,6 +146,7 @@
     <string name="powered_by_google">A Google támogatásával</string>
     <string name="http_proxy">HTTP Proxy</string>
     <string-array name="proxy_choices_array">
+        <item>JWProxy</item>
         <item>Egyik sem</item>
         <item>Orbot</item>
         <item>I2P</item>

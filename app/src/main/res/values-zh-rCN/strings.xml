@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Lightning</string>
     <string name="action_new_tab">新建标签页</string>
     <string name="action_share">分享</string>
     <string name="action_history">历史记录</string>
@@ -99,7 +97,7 @@
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">手动</string>
     <string name="action_auto">自动</string>
-    <string name="action_follow_me">联系我</string>
+    <string name="action_follow_me">联系我们</string>
     <string name="clear_cache">清除缓存</string>
     <string name="message_cache_cleared">缓存已清除</string>
     <string name="message_import">书签已经导入</string>
@@ -176,6 +174,7 @@
     <string name="search_suggestions_off">不显示搜索建议</string>
     <string name="http_proxy">HTTP 代理</string>
     <string-array name="proxy_choices_array">
+        <item>禁闻代理</item>
         <item>无</item>
         <item>Orbot</item>
         <item>I2P</item>

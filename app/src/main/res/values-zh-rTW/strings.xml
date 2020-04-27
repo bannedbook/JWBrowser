@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">閃電瀏覽器</string>
+    <string name="app_name">手機禁網平臺</string>
     <string name="action_new_tab">新增分頁</string>
     <string name="action_share">分享</string>
     <string name="action_history">歷程記錄</string>
@@ -99,7 +99,7 @@
     <string name="title_flash">Adobe Flash</string>
     <string name="action_manual">手動</string>
     <string name="action_auto">自動</string>
-    <string name="action_follow_me">聯絡作者</string>
+    <string name="action_follow_me">聯絡</string>
     <string name="url_twitter">twitter.com/ACRDevelopment</string>
     <string name="clear_cache">清除快取</string>
     <string name="message_cache_cleared">已清除快取</string>
@@ -146,6 +146,7 @@
     <string name="search_suggestions_off">關閉搜尋建議</string>
     <string name="http_proxy">HTTP 代理伺服器</string>
     <string-array name="proxy_choices_array">
+        <item>禁聞代理</item>
         <item>無</item>
         <item>Orbot</item>
         <item>I2P</item>

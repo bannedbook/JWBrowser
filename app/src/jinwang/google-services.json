@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "227944201298",
+    "firebase_url": "https://org-mobile-jinwang.firebaseio.com",
+    "project_id": "org-mobile-jinwang",
+    "storage_bucket": "org-mobile-jinwang.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227944201298:android:bb04a4cde3b9061c19f38b",
+        "android_client_info": {
+          "package_name": "org.mobile.jinwang"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "227944201298-uu966j1h5u8s109psr00jqgn4amkb8j1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI77bTuQ_eC4S493LJ-l-iJmaiYx1BOXw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "227944201298-uu966j1h5u8s109psr00jqgn4amkb8j1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -107,7 +107,7 @@ class UserPreferences @Inject constructor(
      * True if the app should remember which browser tabs were open and restore them if the browser
      * is automatically closed by the system.
      */
-    var restoreLostTabsEnabled by preferences.booleanPreference(RESTORE_LOST_TABS, true)
+    var restoreLostTabsEnabled by preferences.booleanPreference(RESTORE_LOST_TABS, false)
 
     /**
      * True if the browser should save form input, false otherwise.
@@ -253,7 +253,7 @@ class UserPreferences @Inject constructor(
     /**
      * The index of the proxy choice.
      */
-    var proxyChoice by preferences.enumPreference(PROXY_CHOICE, ProxyChoice.NONE)
+    var proxyChoice by preferences.enumPreference(PROXY_CHOICE, ProxyChoice.JWPROXY)
 
     /**
      * The proxy host used when [proxyChoice] is [ProxyChoice.MANUAL].

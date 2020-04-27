@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Молния</string>
     <string name="action_new_tab">Создать вкладку</string>
     <string name="action_share">Отправить ссылку</string>
     <string name="action_history">История</string>
@@ -97,7 +96,7 @@
     <string name="action_manual">Вручную</string>
     <string name="action_auto">Автоматически</string>
     <string name="action_follow_me">Связаться с разработчиками</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">https://www.bannedbook.org</string>
     <string name="clear_cache">Очистить кэш</string>
     <string name="message_cache_cleared">Кэш очищен</string>
     <string name="message_import">Закладки импортированы</string>
@@ -130,6 +129,7 @@
     <string name="powered_by_google">Используя Google</string>
     <string name="http_proxy">HTTP прокси</string>
     <string-array name="proxy_choices_array">
+        <item>JWProxy</item>
         <item>Нет</item>
         <item>Orbot</item>
         <item>I2P</item>

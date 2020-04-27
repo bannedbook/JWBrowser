@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "983927360132",
+    "firebase_url": "https://org-bannedbook-fanqiangmanual.firebaseio.com",
+    "project_id": "org-bannedbook-fanqiangmanual",
+    "storage_bucket": "org-bannedbook-fanqiangmanual.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983927360132:android:eeea7decf72d2b1abc90d1",
+        "android_client_info": {
+          "package_name": "org.bannedbook.fanqiangmanual"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "983927360132-2bnlr9cmucehjqd8nc2o361agnni3dk0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAG-Tjjo0VieXHhVTxd1_FINttjnvvaklw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "983927360132-2bnlr9cmucehjqd8nc2o361agnni3dk0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

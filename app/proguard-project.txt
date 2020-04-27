@@ -1,3 +1,11 @@
+# Get deobfuscated crash reports
+# https://firebase.google.com/docs/crashlytics/get-deobfuscated-reports?platform=android
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+-keep class com.crashlytics.** { *; }
+-dontwarn com.crashlytics.**
+
 -optimizationpasses 5
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
@@ -13,6 +21,7 @@
 -keep public class * extends android.preference.Preference
 -keep public class com.android.vending.licensing.ILicensingService
 -keep public class acr.browser.lightning.reading.*
+-keep class com.google.firebase.iid.FirebaseInstanceId { zza(...); }
 
 -assumenosideeffects class android.util.Log {
     public static *** d(...);

@@ -51,13 +51,17 @@ import java.util.*
 data class Profile(
         @PrimaryKey(autoGenerate = true)
         var id: Long = 0,
+
+        // user configurable fields
         var name: String? = "",
+
         var host: String = sponsored,
         var remotePort: Int = 8388,
         var password: String = "u1rRWTssNv0p",
         var method: String = "aes-256-cfb",
-        var route: String = "all",
-        var remoteDns: String = "dns.google",
+
+        var route: String = "bypass-lan-china",
+        var remoteDns: String = "1.1.1.1",
         var proxyApps: Boolean = false,
         var bypass: Boolean = false,
         var udpdns: Boolean = false,
@@ -66,11 +70,11 @@ data class Profile(
         @TargetApi(28)
         var metered: Boolean = false,
         var individual: String = "",
+        var plugin: String? = null,
+        var udpFallback: Long? = null,
         var tx: Long = 0,
         var rx: Long = 0,
         var userOrder: Long = 0,
-        var plugin: String? = null,
-        var udpFallback: Long? = null,
 
         @Ignore // not persisted in db, only used by direct boot
         var dirty: Boolean = false
@@ -237,13 +241,15 @@ data class Profile(
             private val fallbackMap = mutableMapOf<Profile, Profile>()
 
             private val JsonElement?.optString get() = (this as? JsonPrimitive)?.asString
-            private val JsonElement?.optBoolean get() = // asBoolean attempts to cast everything to boolean
-                (this as? JsonPrimitive)?.run { if (isBoolean) asBoolean else null }
-            private val JsonElement?.optInt get() = try {
-                (this as? JsonPrimitive)?.asInt
-            } catch (_: NumberFormatException) {
-                null
-            }
+            private val JsonElement?.optBoolean
+                get() = // asBoolean attempts to cast everything to boolean
+                    (this as? JsonPrimitive)?.run { if (isBoolean) asBoolean else null }
+            private val JsonElement?.optInt
+                get() = try {
+                    (this as? JsonPrimitive)?.asInt
+                } catch (_: NumberFormatException) {
+                    null
+                }
 
             private fun tryParse(json: JsonObject, fallback: Boolean = false): Profile? {
                 val host = json["server"].optString
@@ -274,8 +280,8 @@ data class Profile(
                     (json["proxy_apps"] as? JsonObject)?.also {
                         proxyApps = it["enabled"].optBoolean ?: proxyApps
                         bypass = it["bypass"].optBoolean ?: bypass
-                        individual = (json["android_list"] as? JsonArray)?.asIterable()?.joinToString("\n") ?:
-                                individual
+                        individual = (it["android_list"] as? JsonArray)?.asIterable()?.mapNotNull { it.optString }
+                                ?.joinToString("\n") ?: individual
                     }
                     udpdns = json["udpdns"].optBoolean ?: udpdns
                     (json["udp_fallback"] as? JsonObject)?.let { tryParse(it, true) }?.also { fallbackMap[this] = it }
@@ -292,6 +298,7 @@ data class Profile(
                     // ignore other types
                 }
             }
+
             fun finalize(create: (Profile) -> Unit) {
                 val profiles = ProfileManager.getAllProfiles() ?: emptyList()
                 for ((profile, fallback) in fallbackMap) {
@@ -308,6 +315,7 @@ data class Profile(
                 }
             }
         }
+
         fun parseJson(json: JsonElement, feature: Profile? = null, create: (Profile) -> Unit) {
             JsonParser(feature).run {
                 process(json)
@@ -325,6 +333,8 @@ data class Profile(
         @Query("SELECT * FROM `Profile` ORDER BY `userOrder`")
         fun list(): List<Profile>
 
+        @Query("SELECT * FROM `Profile`")
+        fun listAll(): List<Profile>
         @Query("SELECT * FROM `Profile` WHERE `url_group` = :group")
         fun listByGroup(group: String): List<Profile>
 

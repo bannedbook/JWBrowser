@@ -1,25 +1,56 @@
+
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'jacoco'
 apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion project.targetSdkVersion
     buildToolsVersion project.buildToolsVersion
-
+    archivesBaseName = "JWBrowser"
     defaultConfig {
         minSdkVersion project.minSdkVersion
         targetSdkVersion project.targetSdkVersion
-        versionName "5.1.0"
+        versionName rootProject.versionName
         vectorDrawables.useSupportLibrary = true
     }
 
     sourceSets {
-        lightningPlus.setRoot('src/LightningPlus')
-        lightningLite.setRoot('src/LightningLite')
+        jinwang.setRoot('src/jinwang')
+        jwproxy.setRoot('src/jwproxy')
+        hxnews.setRoot('src/hxnews')
+        fanqiangmanual.setRoot('src/fanqiangmanual')
+    }
+    productFlavors {
+        jinwang {
+            dimension "capabilities"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+            applicationId "org.mobile.jinwang"
+            versionCode rootProject.versionCode
+        }
+        jwproxy {
+            dimension "capabilities"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+            applicationId "jwproxy.browser.bnews"
+            versionCode rootProject.versionCode
+        }
+        hxnews {
+            dimension "capabilities"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+            applicationId "org.bnews.app"
+            versionCode rootProject.versionCode
+        }
+        fanqiangmanual {
+            dimension "capabilities"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+            applicationId "org.bannedbook.fanqiangmanual"
+            versionCode rootProject.versionCode
+        }
     }
 
     buildTypes {
@@ -39,37 +70,16 @@ android {
             testCoverageEnabled false
 
             ndk {
-                abiFilters "arm64-v8a", "armeabi-v7a", "armeabi", "mips"
+                abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
             }
         }
+    }
+    dexOptions {
+        javaMaxHeapSize "6g"
     }
 
-    testOptions {
-        unitTests.all {
-            jacoco {
-                // This option needs to be included for robolectric tests
-                includeNoLocationClasses = true
-            }
-        }
-    }
 
     flavorDimensions "capabilities"
-
-    productFlavors {
-        lightningPlus {
-            dimension "capabilities"
-            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
-            applicationId "acr.browser.lightning"
-            versionCode 101
-        }
-
-        lightningLite {
-            dimension "capabilities"
-            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")"
-            applicationId "acr.browser.barebones"
-            versionCode 102
-        }
-    }
 
     lintOptions {
         abortOnError true
@@ -82,10 +92,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-}
-
-jacoco {
-    toolVersion = '0.7.9' // See http://www.eclemma.org/jacoco/
+    externalNativeBuild {
+        ndkBuild {
+            path file('src/main/cpp/Android.mk')
+        }
+    }
 }
 
 dexcount {
@@ -97,6 +108,7 @@ dexcount {
 }
 
 dependencies {
+    implementation project(':core')
     // multidex debug
     debugImplementation 'androidx.multidex:multidex:2.0.1'
 
@@ -169,6 +181,11 @@ dependencies {
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation 'androidx.core:core-ktx:1.2.0-alpha04'
+    
+    //firebase
+    //implementation 'com.google.firebase:firebase-analytics:17.2.1'
+    //implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation 'com.google.android.gms:play-services-ads:18.3.0'
 }
 
 kapt {
@@ -188,24 +205,4 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
             freeCompilerArgs += ['-progressive']
         }
     }
-}
-
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testLightningPlusDebugUnitTest', 'createLightningPlusDebugCoverageReport']) {
-
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-
-    final def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
-    final def debugTree = fileTree(dir: "$buildDir/intermediates/classes/lightningPlus/debug", excludes: fileFilter)
-    final def kotlinDebugTree = fileTree(dir: "$buildDir/tmp/kotlin-classes/lightningPlusDebug", excludes: fileFilter)
-    final def mainSrc = "${project.projectDir}/src/test/java"
-
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree], [kotlinDebugTree])
-    executionData = fileTree(dir: "$buildDir", includes: [
-            "jacoco/testLightningPlusDebugUnitTest.exec",
-            "outputs/code-coverage/connected/*coverage.ec"
-    ])
 }

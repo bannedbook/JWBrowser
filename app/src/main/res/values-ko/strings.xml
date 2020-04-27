@@ -1,6 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
-    <string name="app_name">라이트닝</string>
     <string name="action_new_tab">새 탭</string>
     <string name="action_share">공유</string>
     <string name="action_history">기록</string>
@@ -92,7 +91,7 @@
     <string name="action_manual">수동</string>
     <string name="action_auto">자동</string>
     <string name="action_follow_me">개발자에게 연락하기</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">https://www.bannedbook.org</string>
     <string name="clear_cache">캐시 지우기</string>
     <string name="message_cache_cleared">캐시를 지웠습니다</string>
     <string name="message_import">즐겨찾기를 가져왔습니다</string>

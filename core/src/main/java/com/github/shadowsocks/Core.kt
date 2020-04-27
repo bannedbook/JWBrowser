@@ -20,20 +20,23 @@
 
 package com.github.shadowsocks
 
-import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import SpeedUpVPN.VpnEncrypt
+import android.app.*
 import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Build
+import android.os.SystemClock
 import android.os.UserManager
 import android.util.Log
+import android.view.Gravity
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.work.Configuration
@@ -47,8 +50,8 @@ import com.github.shadowsocks.database.ProfileManager
 import com.github.shadowsocks.database.SSRSubManager
 import com.github.shadowsocks.net.TcpFastOpen
 import com.github.shadowsocks.preference.DataStore
-import com.github.shadowsocks.work.SSRSubSyncer
 import com.github.shadowsocks.utils.*
+import com.github.shadowsocks.work.UpdateCheck
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.fabric.sdk.android.Fabric
@@ -58,14 +61,19 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
+import java.net.*
+import javax.net.ssl.SSLHandshakeException
 import kotlin.reflect.KClass
 
 object Core {
     const val TAG = "Core"
 
     lateinit var app: Application
+        @VisibleForTesting set
     lateinit var configureIntent: (Context) -> PendingIntent
+    val activity by lazy { app.getSystemService<ActivityManager>()!! }
     val connectivity by lazy { app.getSystemService<ConnectivityManager>()!! }
+    val notification by lazy { app.getSystemService<NotificationManager>()!! }
     val packageInfo: PackageInfo by lazy { getPackageInfo(app.packageName) }
     val deviceStorage by lazy { if (Build.VERSION.SDK_INT < 24) app else DeviceStorageApp(app) }
     val analytics: FirebaseAnalytics by lazy { FirebaseAnalytics.getInstance(deviceStorage) }
@@ -87,9 +95,14 @@ object Core {
         DataStore.profileId = result.id
         return result
     }
-    
+
+    fun showMessage(msg: String) {
+        var toast = Toast.makeText(app, msg, Toast.LENGTH_SHORT)
+        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
+        toast.show()
+    }
     //Import built-in subscription
-    fun updateBuiltinServers(){
+    fun updateBuiltinServers(activity:Activity){
         Log.e("updateBuiltinServers ","...")
         GlobalScope.launch {
             var  builtinSubUrls  = app.resources.getStringArray(R.array.builtinSubUrls)
@@ -97,9 +110,99 @@ object Core {
                 var builtinSub=SSRSubManager.create(builtinSubUrls.get(i),"aes")
                 if (builtinSub != null) break
             }
+            val profiles = ProfileManager.getAllProfilesByGroup(VpnEncrypt.vpnGroupName) ?: emptyList()
+            if (profiles.isNullOrEmpty()) {
+                Log.e("------","profiles empty, return@launch")
+                activity.runOnUiThread(){showMessage("网络连接异常，连接互联网后，请重起本APP")}
+                return@launch
+            }
+
+            var selectedProfileId=profiles.first().id
+            switchProfile(selectedProfileId)
+            startService()
+            var testMsg="测试通道，请稍候."
+
+            activity.runOnUiThread(){showMessage(testMsg)}
+            Thread.sleep(5_000)
+            var selectedProfileDelay = testConnection2(profiles.first())
+            testMsg+="."
+            activity.runOnUiThread(){showMessage(testMsg)}
+
+
+            Log.e("test proxy:",profiles.first().name+", delay:"+selectedProfileDelay)
+            for (i in 1 until profiles.size) {
+                if (!profiles.get(i).isBuiltin())continue
+                switchProfile(profiles.get(i).id)
+                reloadService()
+                Thread.sleep(2_000)
+                var delay = testConnection2(profiles.get(i))
+
+                testMsg+="."
+                activity.runOnUiThread(){showMessage(testMsg)}
+
+                Log.e("test proxy:",profiles.get(i).name+", delay:"+delay)
+                if(delay < selectedProfileDelay){
+                    selectedProfileDelay=delay
+                    selectedProfileId=profiles.get(i).id
+                }
+            }
+
+            if(DataStore.profileId!=selectedProfileId){
+                switchProfile(selectedProfileId)
+                reloadService()
+            }
+            Thread.sleep(2_000)
+
+            val openURL = Intent(Intent.ACTION_VIEW)
+            openURL.data = Uri.parse("https://www.bannedbook.org/bnews/fq/?utm_source=org.mobile.jinwang")
+            openURL.setClassName(activity.applicationContext,activity.javaClass.name);
+            activity.startActivity(openURL)
         }
     }
+    private val URLConnection.responseLength: Long
+        get() = if (Build.VERSION.SDK_INT >= 24) contentLengthLong else contentLength.toLong()
 
+    fun testConnection2(server:Profile): Long {
+        var result : Long = 3600000  // 1 hour
+        var conn: HttpURLConnection? = null
+
+        try {
+            val url = URL("https",
+                    "www.google.com",
+                    "/generate_204")
+            //Log.e("start test server",server.name + "...")
+            //conn = url.openConnection(Proxy(Proxy.Type.HTTP,DataStore.httpProxyAddress)) as HttpURLConnection
+            conn = url.openConnection(
+                    Proxy(Proxy.Type.HTTP,
+                            InetSocketAddress("127.0.0.1", VpnEncrypt.HTTP_PROXY_PORT))) as HttpURLConnection
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36");
+            conn.connectTimeout = 5000
+            conn.readTimeout = 5000
+            conn.setRequestProperty("Connection", "close")
+            conn.instanceFollowRedirects = false
+            conn.useCaches = false
+
+            val start = SystemClock.elapsedRealtime()
+            val code = conn.responseCode
+            val elapsed = SystemClock.elapsedRealtime() - start
+            //Log.e("test server",server.name + " delay is "+ elapsed.toString())
+            if (code == 204 || code == 200 && conn.responseLength == 0L) {
+                result = elapsed
+            } else {
+                throw IOException(app.getString(R.string.connection_test_error_status_code, code))
+            }
+        }
+        catch (e: IOException) {
+            // network exception
+            Log.e("Core:","testConnection2:"+e.toString())
+        } catch (e: Exception) {
+            // library exception, eg sumsung
+            Log.e("Core-","testConnection Exception: "+Log.getStackTraceString(e))
+        } finally {
+            conn?.disconnect()
+        }
+        return result
+    }
     fun init(app: Application, configureClass: KClass<out Any>) {
         this.app = app
         this.configureIntent = {
@@ -124,8 +227,7 @@ object Core {
             setExecutor { GlobalScope.launch { it.run() } }
             setTaskExecutor { GlobalScope.launch { it.run() } }
         }.build())
-        //UpdateCheck.enqueue() //google play Publishing, prohibiting self-renewal
-        if (DataStore.ssrSubAutoUpdate) SSRSubSyncer.enqueue()
+        UpdateCheck.enqueue() //google play Publishing, prohibiting self-renewal
 
         // handle data restored/crash
         if (Build.VERSION.SDK_INT >= 24 && DataStore.directBootAware &&
@@ -147,8 +249,7 @@ object Core {
 
     fun updateNotificationChannels() {
         if (Build.VERSION.SDK_INT >= 26) @RequiresApi(26) {
-            val nm = app.getSystemService<NotificationManager>()!!
-            nm.createNotificationChannels(listOf(
+            notification.createNotificationChannels(listOf(
                     NotificationChannel("service-vpn", app.getText(R.string.service_vpn),
                             if (Build.VERSION.SDK_INT >= 28) NotificationManager.IMPORTANCE_MIN
                             else NotificationManager.IMPORTANCE_LOW),   // #1355
@@ -156,7 +257,7 @@ object Core {
                             NotificationManager.IMPORTANCE_LOW),
                     NotificationChannel("service-transproxy", app.getText(R.string.service_transproxy),
                             NotificationManager.IMPORTANCE_LOW)))
-            nm.deleteNotificationChannel("service-nat") // NAT mode is gone for good
+            notification.deleteNotificationChannel("service-nat")   // NAT mode is gone for good
         }
     }
 

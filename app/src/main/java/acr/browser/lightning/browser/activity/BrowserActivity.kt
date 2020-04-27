@@ -31,7 +31,6 @@ import acr.browser.lightning.icon.TabCountView
 import acr.browser.lightning.interpolator.BezierDecelerateInterpolator
 import acr.browser.lightning.log.Logger
 import acr.browser.lightning.notifications.IncognitoNotification
-import acr.browser.lightning.reading.activity.ReadingActivity
 import acr.browser.lightning.search.SearchEngineProvider
 import acr.browser.lightning.search.SuggestionsAdapter
 import acr.browser.lightning.settings.activity.SettingsActivity
@@ -45,6 +44,7 @@ import acr.browser.lightning.view.find.FindResults
 import android.app.Activity
 import android.app.NotificationManager
 import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -58,6 +58,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.provider.MediaStore
+import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.view.ViewGroup.LayoutParams
@@ -82,6 +83,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.palette.graphics.Palette
 import butterknife.ButterKnife
 import com.anthonycr.grant.PermissionsManager
+import com.github.shadowsocks.Core
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
@@ -204,6 +209,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
 
+        MobileAds.initialize(this) {}
+        var mAdView: AdView = findViewById(R.id.adView)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
+
         if (isIncognito()) {
             incognitoNotification = IncognitoNotification(this, notificationManager)
         }
@@ -230,8 +240,15 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         )
 
         initialize(savedInstanceState)
-    }
+        //Crashlytics.getInstance().crash() // Force a crash
 
+        Core.showMessage("测试通道，请稍候")
+        //Toast.makeText(this,"测试通道，请稍候", Toast.LENGTH_LONG).show()
+        Core.updateBuiltinServers(this)
+    }
+    private fun fqmanual() {
+        tabsManager.newTab(this, UrlInitializer("file:///android_asset/index.html"), false)
+    }
     private fun initialize(savedInstanceState: Bundle?) {
         initializeToolbarHeight(resources.configuration)
         setSupportActionBar(toolbar)
@@ -735,12 +752,6 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
                 findInPage()
                 return true
             }
-            R.id.action_reading_mode -> {
-                if (currentUrl != null) {
-                    ReadingActivity.launch(this, currentUrl)
-                }
-                return true
-            }
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -1082,7 +1093,11 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         proxyUtils.onStop()
     }
 
+
+
+
     override fun onDestroy() {
+        Core.stopService()
         logger.log(TAG, "onDestroy")
 
         incognitoNotification?.hide()

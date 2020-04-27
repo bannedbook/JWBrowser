@@ -38,9 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.UnknownHostException
+import java.net.*
 import java.security.MessageDigest
 
 /**
@@ -54,52 +52,27 @@ class ProxyInstance(val profile: Profile, private val route: String = profile.ro
     private var scheduleConfigUpdate = false
 
     suspend fun init(service: BaseService.Interface, hosts: HostsFile) {
-        if (profile.isSponsored) {
-            scheduleConfigUpdate = true
-            val mdg = MessageDigest.getInstance("SHA-1")
-            mdg.update(Core.packageInfo.signaturesCompat.first().toByteArray())
-            val (config, success) = RemoteConfig.fetch()
-            scheduleConfigUpdate = !success
-            val conn = withContext(Dispatchers.IO) {
-                // Network.openConnection might use networking, see https://issuetracker.google.com/issues/135242093
-                service.openConnection(URL(config.getString("proxy_url"))) as HttpURLConnection
-            }
-            conn.requestMethod = "POST"
-            conn.doOutput = true
-
-            val proxies = conn.useCancellable {
-                try {
-                    outputStream.bufferedWriter().use {
-                        it.write("sig=" + Base64.encodeToString(mdg.digest(), Base64.DEFAULT))
-                    }
-                    inputStream.bufferedReader().readText()
-                } catch (e: IOException) {
-                    throw BaseService.ExpectedExceptionWrapper(e)
-                }
-            }.split('|').toMutableList()
-            proxies.shuffle()
-            val proxy = proxies.first().split(':')
-            profile.host = proxy[0].trim()
-            profile.remotePort = proxy[1].trim().toInt()
-            profile.password = proxy[2].trim()
-            profile.method = proxy[3].trim()
-        }
-
-        if (route == Acl.CUSTOM_RULES) try {
-            withContext(Dispatchers.IO) {
-                Acl.save(Acl.CUSTOM_RULES, Acl.customRules.flatten(10, service::openConnection))
-            }
-        } catch (e: IOException) {
-            throw BaseService.ExpectedExceptionWrapper(e)
-        }
 
         // it's hard to resolve DNS on a specific interface so we'll do it here
         if (profile.host.parseNumericAddress() == null) {
-            profile.host = (hosts.resolve(profile.host).firstOrNull() ?: try {
-                service.resolver(profile.host).firstOrNull()
-            } catch (_: IOException) {
-                null
-            })?.hostAddress ?: throw UnknownHostException()
+            profile.host = hosts.resolve(profile.host).run {
+                if (isEmpty()) try {
+                    service.resolver(profile.host).firstOrNull()
+                } catch (_: IOException) {
+                    null
+                } else {
+                    val network = service.getActiveNetwork() ?: throw UnknownHostException()
+                    val hasIpv4 = DnsResolverCompat.haveIpv4(network)
+                    val hasIpv6 = DnsResolverCompat.haveIpv6(network)
+                    firstOrNull {
+                        when (it) {
+                            is Inet4Address -> hasIpv4
+                            is Inet6Address -> hasIpv6
+                            else -> error(it)
+                        }
+                    }
+                }
+            }?.hostAddress ?: throw UnknownHostException()
         }
     }
 
@@ -139,7 +112,6 @@ class ProxyInstance(val profile: Profile, private val route: String = profile.ro
 
     fun scheduleUpdate() {
         if (route !in arrayOf(Acl.ALL, Acl.CUSTOM_RULES)) AclSyncer.schedule(route)
-        //if (scheduleConfigUpdate) RemoteConfig.scheduleFetch()
     }
 
     fun shutdown(scope: CoroutineScope) {

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "745971364206",
+    "firebase_url": "https://jwproxy-browser-bnews.firebaseio.com",
+    "project_id": "jwproxy-browser-bnews",
+    "storage_bucket": "jwproxy-browser-bnews.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745971364206:android:0d5725d76f504ae195d17f",
+        "android_client_info": {
+          "package_name": "jwproxy.browser.bnews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745971364206-blq9c6nkkf023r3f9br41gj1qarssnlc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtvzuFeCZoPXcAQfO_H-mABuPed7sgv5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745971364206-blq9c6nkkf023r3f9br41gj1qarssnlc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <string name="app_name">SS VPN</string>
   <string name="quick_toggle">Toggle</string>
   <string name="send_email">Send email</string>
 
@@ -27,7 +26,7 @@
   <string name="connection_test_error_status_code">Error code: #%d</string>
 
   <!-- proxy category -->
-    <string name="group_name">Group Name</string>
+  <string name="group_name">Group Name</string>
   <string name="profile_name">Profile Name</string>
   <string name="proxy">Server</string>
   <string name="remote_port">Remote Port</string>
@@ -154,21 +153,7 @@
   <string name="plugin_untrusted">Warning: This plugin does not seem to come from a known trusted source.</string>
   <string name="profile_plugin">Plugin: %s</string>
 
-  <!-- ssrsub -->
-  <string name="ssrsub_manage">SS Subscription</string>
-  <plurals name="ssrsub_manage_summary">
-    <item quantity="other">Number of subscriptions: %d</item>
-  </plurals>
   <string name="update_servers">Update Servers</string>
-  <string name="ssrsub_autoupdate">Auto update SS subscriptions</string>
-  <string name="ssrsub_autoupdate_summary">Auto update daily</string>
-  <string name="ssrsub_add">Add URL</string>
-  <string name="ssrsub_list">Item List</string>
-  <string name="ssrsub_remove_tip_title">Subscription removal</string>
-  <string name="ssrsub_remove_tip">Delete this subscription without removing its nodes (nodes that bear its group name)?</string>
-  <string name="ssrsub_remove_tip_direct">Delete the URL only</string>
-  <string name="ssrsub_remove_tip_delete">Delete the nodes too</string>
-
   <string name="recommended_site_1"></string>
   <string name="recommended_site_2"></string>
   <string-array name="builtinSubUrls">

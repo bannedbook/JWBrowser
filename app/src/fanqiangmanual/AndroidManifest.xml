@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2014 A.C.R. Development -->
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="acr.browser.lightning"
+    android:installLocation="auto">
+    <application
+        android:name=".BrowserApp"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"
+        android:label="@string/app_name">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2194043486084479~2040401732"/>
+    </application>
+
+</manifest>

@@ -43,8 +43,8 @@ object ProfileManager {
         fun onAdd(profile: Profile)
         fun onRemove(profileId: Long)
         fun onCleared()
+        fun reloadProfiles()
     }
-
     var listener: Listener? = null
 
     @Throws(SQLException::class)
@@ -163,7 +163,6 @@ object ProfileManager {
         printLog(ex)
         null
     }
-
     @Throws(IOException::class)
     fun getAllProfilesIgnoreGroup(group: String): List<Profile>? = try {
         PrivateDatabase.profileDao.listIgnoreGroup(group)

@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Lightning</string>
     <string name="action_new_tab">Nueva pestaña</string>
     <string name="action_share">Compartir</string>
     <string name="action_history">Historial</string>
@@ -93,7 +92,7 @@
     <string name="action_manual">Manual</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contáctame</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">https://www.bannedbook.org</string>
     <string name="clear_cache">Limpiar caché</string>
     <string name="message_cache_cleared">La caché se ha borrado</string>
     <string name="message_import">Los marcadores se han importado</string>
@@ -121,6 +120,7 @@
     <string name="search_suggestions_off">Sin sugerencias de búsqueda</string>
     <string name="http_proxy">Proxy HTTP</string>
     <string-array name="proxy_choices_array">
+        <item>JWProxy</item>
         <item>Ninguno</item>
         <item>Orbot</item>
         <item>I2P</item>

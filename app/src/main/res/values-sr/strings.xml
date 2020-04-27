@@ -16,8 +16,6 @@
 -->
 
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-
-    <string name="app_name">Муња</string>
     <string name="action_new_tab">Нови језичак</string>
     <string name="action_share">Подели</string>
     <string name="action_history">Историјат</string>
@@ -147,6 +145,7 @@
     <string name="powered_by_google">Погоњено Гуглом</string>
     <string name="http_proxy">ХТТП прокси</string>
     <string-array name="proxy_choices_array">
+        <item>JWProxy</item>
         <item>Ништа</item>
         <item>Орбот</item>
         <item>I2P</item>

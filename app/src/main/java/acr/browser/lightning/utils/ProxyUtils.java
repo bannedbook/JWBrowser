@@ -14,6 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import SpeedUpVPN.VpnEncrypt;
 import acr.browser.lightning.BrowserApp;
 import acr.browser.lightning.R;
 import acr.browser.lightning.browser.ProxyChoice;
@@ -126,6 +127,10 @@ public final class ProxyUtils {
         int port;
 
         switch (userPreferences.getProxyChoice()) {
+            case JWPROXY:
+                host = "127.0.0.1";
+                port = VpnEncrypt.HTTP_PROXY_PORT;
+                break;
             case NONE:
                 // We shouldn't be here
                 return;

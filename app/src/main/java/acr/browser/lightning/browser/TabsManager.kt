@@ -105,6 +105,7 @@ class TabsManager @Inject constructor(
                 if (incognito) {
                     initializeIncognitoMode(it.value())
                 } else {
+                    //initializeIncognitoMode(it.value())
                     initializeRegularMode(it.value(), activity)
                 }
             }

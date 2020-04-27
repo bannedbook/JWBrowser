@@ -17,8 +17,6 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
-
-    <string name="app_name">Lightning</string>
     <string name="action_new_tab">Nouvel onglet</string>
     <string name="action_share">Partager</string>
     <string name="action_history">Historique</string>
@@ -115,7 +113,7 @@
     <string name="action_manual">Manuel</string>
     <string name="action_auto">Auto</string>
     <string name="action_follow_me">Contact</string>
-    <string name="url_twitter">twitter.com/RestainoAnthony</string>
+    <string name="url_twitter">https://www.bannedbook.org</string>
     <string name="clear_cache">Effacer le cache</string>
     <string name="message_cache_cleared">Cache effacé</string>
     <string name="message_import">Favoris ont été importés</string>
@@ -150,6 +148,7 @@
     <string name="search_suggestions_off">Pas de suggestions de recherche</string>
     <string name="http_proxy">Proxy HTTP</string>
     <string-array name="proxy_choices_array">
+        <item>JWProxy</item>
         <item>Aucun</item>
         <item>Orbot</item>
         <item>I2P</item>
