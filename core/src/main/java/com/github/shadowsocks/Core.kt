@@ -24,6 +24,7 @@ import SpeedUpVPN.VpnEncrypt
 import android.app.*
 import android.app.admin.DevicePolicyManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -64,7 +65,7 @@ import java.io.IOException
 import java.net.*
 import javax.net.ssl.SSLHandshakeException
 import kotlin.reflect.KClass
-
+import com.github.shadowsocks.bg.ProxyService
 object Core {
     const val TAG = "Core"
 
@@ -87,7 +88,12 @@ object Core {
     }
     val currentProfile: Pair<Profile, Profile?>? get() {
         if (DataStore.directBootAware) DirectBoot.getDeviceProfile()?.apply { return this }
-        return ProfileManager.expand(ProfileManager.getProfile(DataStore.profileId) ?: return null)
+        var theOne=ProfileManager.getProfile(DataStore.profileId)
+        if (theOne==null){
+            theOne=ProfileManager.getRandomVPNServer()
+            if (theOne!=null)DataStore.profileId=theOne.id
+        }
+        return ProfileManager.expand(theOne ?: return null)
     }
 
     fun switchProfile(id: Long): Profile {
@@ -96,24 +102,19 @@ object Core {
         return result
     }
 
-    fun showMessage(msg: String) {
-        var toast = Toast.makeText(app, msg, Toast.LENGTH_SHORT)
-        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
-        toast.show()
-    }
     //Import built-in subscription
     fun updateBuiltinServers(activity:Activity){
         Log.e("updateBuiltinServers ","...")
         GlobalScope.launch {
             var  builtinSubUrls  = app.resources.getStringArray(R.array.builtinSubUrls)
             for (i in 0 until builtinSubUrls.size) {
-                var builtinSub=SSRSubManager.create(builtinSubUrls.get(i),"aes")
+                var builtinSub=SSRSubManager.createBuiltInSub(builtinSubUrls.get(i))
                 if (builtinSub != null) break
             }
             val profiles = ProfileManager.getAllProfilesByGroup(VpnEncrypt.vpnGroupName) ?: emptyList()
             if (profiles.isNullOrEmpty()) {
                 Log.e("------","profiles empty, return@launch")
-                activity.runOnUiThread(){showMessage("网络连接异常，连接互联网后，请重起本APP")}
+                activity.runOnUiThread(){alertMessage("网络连接异常，连接互联网后，请重起本APP",activity)}
                 return@launch
             }
 
@@ -203,6 +204,25 @@ object Core {
         }
         return result
     }
+    /**
+     * import free sub
+     */
+    fun importFreeSubs(): Boolean {
+        try {
+            GlobalScope.launch {
+                var  freesuburl  = app.resources.getStringArray(R.array.freesuburl)
+                for (i in freesuburl.indices) {
+                    var freeSub=SSRSubManager.createSSSub(freesuburl[i])
+                    if (freeSub != null) break
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+        return true
+    }
+
     fun init(app: Application, configureClass: KClass<out Any>) {
         this.app = app
         this.configureIntent = {
@@ -268,4 +288,25 @@ object Core {
     fun startService() = ContextCompat.startForegroundService(app, Intent(app, ShadowsocksConnection.serviceClass))
     fun reloadService() = app.sendBroadcast(Intent(Action.RELOAD).setPackage(app.packageName))
     fun stopService() = app.sendBroadcast(Intent(Action.CLOSE).setPackage(app.packageName))
+    fun startServiceForTest() = app.startService(Intent(app, ProxyService::class.java).putExtra("test","go"))
+    fun showMessage(msg: String) {
+        var toast = Toast.makeText(app, msg, Toast.LENGTH_LONG)
+        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
+        toast.show()
+    }
+
+    fun alertMessage(msg: String,activity:Context) {
+        try {
+            if(activity==null || (activity as Activity).isFinishing)return
+        val builder: AlertDialog.Builder? = activity.let {
+            AlertDialog.Builder(activity)
+        }
+        builder?.setMessage(msg)?.setTitle("SS VPN")?.setPositiveButton("ok", DialogInterface.OnClickListener {
+            _, _ ->
+        })
+        val dialog: AlertDialog? = builder?.create()
+        dialog?.show()
+        }
+        catch (t:Throwable){}
+    }
 }
