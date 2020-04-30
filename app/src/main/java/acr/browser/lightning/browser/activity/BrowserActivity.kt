@@ -5,6 +5,7 @@
 package acr.browser.lightning.browser.activity
 
 import acr.browser.lightning.AppTheme
+import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.IncognitoActivity
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.*
@@ -244,7 +245,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         Core.showMessage("测试通道，请稍候")
         //Toast.makeText(this,"测试通道，请稍候", Toast.LENGTH_LONG).show()
-        Core.updateBuiltinServers(this)
+        Core.updateBuiltinServers(this, BuildConfig.STOP_UPDATE)
     }
     private fun fqmanual() {
         tabsManager.newTab(this, UrlInitializer("file:///android_asset/index.html"), false)

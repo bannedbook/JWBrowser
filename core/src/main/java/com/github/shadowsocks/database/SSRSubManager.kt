@@ -207,8 +207,8 @@ object SSRSubManager {
         try {
             val response = getResponse(url,mode)
             val ssrProfiles = Profile.findAllSSRUrls(response, Core.currentProfile?.first)
-            val sspPofiles = Profile.findAllSSUrls(response, Core.currentProfile?.first)
-            ssrProfiles.addAll(sspPofiles)
+            //val sspPofiles = Profile.findAllSSUrls(response, Core.currentProfile?.first)
+            //ssrProfiles.addAll(sspPofiles)
             val profiles=ssrProfiles.toList()
             if (profiles.isNullOrEmpty() || profiles[0].url_group.isEmpty()) return null
             val new = SSRSub(url = url, url_group = profiles[0].url_group)

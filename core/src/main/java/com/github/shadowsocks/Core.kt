@@ -103,18 +103,19 @@ object Core {
     }
 
     //Import built-in subscription
-    fun updateBuiltinServers(activity:Activity){
+    fun updateBuiltinServers(activity:Activity,stopUpdateNotification:Boolean=false){
         Log.e("updateBuiltinServers ","...")
         GlobalScope.launch {
             var  builtinSubUrls  = app.resources.getStringArray(R.array.builtinSubUrls)
             for (i in 0 until builtinSubUrls.size) {
-                var builtinSub=SSRSubManager.createBuiltInSub(builtinSubUrls.get(i))
+                var builtinSub=SSRSubManager.create(builtinSubUrls.get(i),"aes")
+                //var builtinSub=SSRSubManager.createBuiltInSub(builtinSubUrls.get(i))
                 if (builtinSub != null) break
             }
-            val profiles = ProfileManager.getAllProfilesByGroup(VpnEncrypt.vpnGroupName) ?: emptyList()
+            val profiles = ProfileManager.getAllProfilesByGroup(VpnEncrypt.vpnGroupName)
             if (profiles.isNullOrEmpty()) {
                 Log.e("------","profiles empty, return@launch")
-                activity.runOnUiThread(){alertMessage("网络连接异常，连接互联网后，请重起本APP",activity)}
+                activity.runOnUiThread {alertMessage("网络连接异常，连接互联网后，请重起本APP",activity)}
                 return@launch
             }
 
@@ -123,11 +124,11 @@ object Core {
             startService()
             var testMsg="测试通道，请稍候."
 
-            activity.runOnUiThread(){showMessage(testMsg)}
+            activity.runOnUiThread {showMessage(testMsg)}
             Thread.sleep(5_000)
             var selectedProfileDelay = testConnection2(profiles.first())
             testMsg+="."
-            activity.runOnUiThread(){showMessage(testMsg)}
+            activity.runOnUiThread {showMessage(testMsg)}
 
 
             Log.e("test proxy:",profiles.first().name+", delay:"+selectedProfileDelay)
@@ -139,7 +140,7 @@ object Core {
                 var delay = testConnection2(profiles.get(i))
 
                 testMsg+="."
-                activity.runOnUiThread(){showMessage(testMsg)}
+                activity.runOnUiThread {showMessage(testMsg)}
 
                 Log.e("test proxy:",profiles.get(i).name+", delay:"+delay)
                 if(delay < selectedProfileDelay){
@@ -155,8 +156,10 @@ object Core {
             Thread.sleep(2_000)
 
             val openURL = Intent(Intent.ACTION_VIEW)
-            openURL.data = Uri.parse("https://www.bannedbook.org/bnews/fq/?utm_source=org.mobile.jinwang")
-            openURL.setClassName(activity.applicationContext,activity.javaClass.name);
+            var startUrl="https://www.bannedbook.org/bnews/fq/?utm_source=org.mobile.jinwang"
+            if (stopUpdateNotification)startUrl+="&stopUpdateNotification=true"
+            openURL.data = Uri.parse(startUrl)
+            openURL.setClassName(activity.applicationContext,activity.javaClass.name)
             activity.startActivity(openURL)
         }
     }
@@ -176,7 +179,7 @@ object Core {
             conn = url.openConnection(
                     Proxy(Proxy.Type.HTTP,
                             InetSocketAddress("127.0.0.1", VpnEncrypt.HTTP_PROXY_PORT))) as HttpURLConnection
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36")
             conn.connectTimeout = 5000
             conn.readTimeout = 5000
             conn.setRequestProperty("Connection", "close")

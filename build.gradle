@@ -10,8 +10,8 @@ buildscript {
         junitVersion = '4.12'
         androidTestVersion = '1.2.0'
         androidEspressoVersion = '3.2.0'
-        versionCode = 108
-        versionName = "5.1.5"
+        versionCode = 109
+        versionName = "5.1.6"
     }
 
     repositories {

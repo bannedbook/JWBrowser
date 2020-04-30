@@ -1,1 +1,1 @@
-include ':app', ':core', ':plugin', ':v2ray-plugin'
+include ':app', ':core', ':plugin'

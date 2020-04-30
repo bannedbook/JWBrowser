@@ -30,24 +30,28 @@ android {
         jinwang {
             dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+            buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"false\")"
             applicationId "org.mobile.jinwang"
             versionCode rootProject.versionCode
         }
         jwproxy {
             dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+            buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"true\")"
             applicationId "jwproxy.browser.bnews"
             versionCode rootProject.versionCode
         }
         hxnews {
             dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+            buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"true\")"
             applicationId "org.bnews.app"
             versionCode rootProject.versionCode
         }
         fanqiangmanual {
             dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+            buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"true\")"
             applicationId "org.bannedbook.fanqiangmanual"
             versionCode rootProject.versionCode
         }
