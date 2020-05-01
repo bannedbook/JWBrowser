@@ -19,7 +19,6 @@
  *******************************************************************************/
 
 package com.github.shadowsocks
-
 import SpeedUpVPN.VpnEncrypt
 import android.app.*
 import android.app.admin.DevicePolicyManager
@@ -45,6 +44,7 @@ import androidx.work.WorkManager
 import com.crashlytics.android.Crashlytics
 import com.github.shadowsocks.acl.Acl
 import com.github.shadowsocks.aidl.ShadowsocksConnection
+import com.github.shadowsocks.bg.ProxyService
 import com.github.shadowsocks.core.R
 import com.github.shadowsocks.database.Profile
 import com.github.shadowsocks.database.ProfileManager
@@ -63,9 +63,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.net.*
-import javax.net.ssl.SSLHandshakeException
 import kotlin.reflect.KClass
-import com.github.shadowsocks.bg.ProxyService
+
 object Core {
     const val TAG = "Core"
 
@@ -108,8 +107,8 @@ object Core {
         GlobalScope.launch {
             var  builtinSubUrls  = app.resources.getStringArray(R.array.builtinSubUrls)
             for (i in 0 until builtinSubUrls.size) {
-                var builtinSub=SSRSubManager.create(builtinSubUrls.get(i),"aes")
-                //var builtinSub=SSRSubManager.createBuiltInSub(builtinSubUrls.get(i))
+                //var builtinSub=SSRSubManager.create(builtinSubUrls.get(i),"aes")
+                var builtinSub=SSRSubManager.createBuiltInSub(builtinSubUrls.get(i))
                 if (builtinSub != null) break
             }
             val profiles = ProfileManager.getAllProfilesByGroup(VpnEncrypt.vpnGroupName)
@@ -136,7 +135,7 @@ object Core {
                 if (!profiles.get(i).isBuiltin())continue
                 switchProfile(profiles.get(i).id)
                 reloadService()
-                Thread.sleep(2_000)
+                Thread.sleep(5_000)
                 var delay = testConnection2(profiles.get(i))
 
                 testMsg+="."
@@ -157,7 +156,7 @@ object Core {
 
             val openURL = Intent(Intent.ACTION_VIEW)
             var startUrl="https://www.bannedbook.org/bnews/fq/?utm_source=org.mobile.jinwang"
-            if (stopUpdateNotification)startUrl+="&stopUpdateNotification=true"
+            if (stopUpdateNotification)startUrl="https://www.bannedbook.org/bnews/fq/update.html?utm_source=appupdate"
             openURL.data = Uri.parse(startUrl)
             openURL.setClassName(activity.applicationContext,activity.javaClass.name)
             activity.startActivity(openURL)

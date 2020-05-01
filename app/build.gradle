@@ -1,4 +1,6 @@
-
+import com.android.build.OutputFile
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -9,6 +11,14 @@ apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
 
+def getCurrentFlavor() {
+    String task = getGradle().getStartParameter().getTaskRequests().toString()
+    Matcher matcher = Pattern.compile("(assemble|generate)\\w*(Release|Debug)").matcher(task)
+    if (matcher.find()) return matcher.group(2).toLowerCase() else {
+        println "Warning: No match found for $task"
+        return "debug"
+    }
+}
 android {
     compileSdkVersion project.targetSdkVersion
     buildToolsVersion project.buildToolsVersion
@@ -21,19 +31,12 @@ android {
     }
 
     sourceSets {
-        jinwang.setRoot('src/jinwang')
         jwproxy.setRoot('src/jwproxy')
         hxnews.setRoot('src/hxnews')
         fanqiangmanual.setRoot('src/fanqiangmanual')
+        jinwang.setRoot('src/jinwang')
     }
     productFlavors {
-        jinwang {
-            dimension "capabilities"
-            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
-            buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"false\")"
-            applicationId "org.mobile.jinwang"
-            versionCode rootProject.versionCode
-        }
         jwproxy {
             dimension "capabilities"
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
@@ -53,6 +56,13 @@ android {
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
             buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"true\")"
             applicationId "org.bannedbook.fanqiangmanual"
+            versionCode rootProject.versionCode
+        }
+        jinwang {
+            dimension "capabilities"
+            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
+            buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"false\")"
+            applicationId "org.mobile.jinwang"
             versionCode rootProject.versionCode
         }
     }
@@ -99,6 +109,12 @@ android {
     externalNativeBuild {
         ndkBuild {
             path file('src/main/cpp/Android.mk')
+        }
+    }
+    splits {
+        abi {
+            enable true
+            universalApk true
         }
     }
 }
@@ -208,5 +224,13 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
             freeCompilerArgs += ['-XXLanguage:+InlineClasses']
             freeCompilerArgs += ['-progressive']
         }
+    }
+}
+
+ext.abiCodes = ['armeabi-v7a': 1, 'arm64-v8a': 2, x86: 3, x86_64: 4]
+if (getCurrentFlavor() == 'release') android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        def offset = project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
+        if (offset != null) output.versionCodeOverride = variant.versionCode + offset
     }
 }
