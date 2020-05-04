@@ -210,10 +210,10 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
 
-        MobileAds.initialize(this) {}
-        var mAdView: AdView = findViewById(R.id.adView)
-        val adRequest = AdRequest.Builder().build()
-        mAdView.loadAd(adRequest)
+        //MobileAds.initialize(this) {}
+        //var mAdView: AdView = findViewById(R.id.adView)
+        //val adRequest = AdRequest.Builder().build()
+        //mAdView.loadAd(adRequest)
 
         if (isIncognito()) {
             incognitoNotification = IncognitoNotification(this, notificationManager)
