@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="adUnitId">ca-app-pub-2194043486084479/3517134934</string>
-    <string name="app_name">翻墙手册</string>
+    <string name="app_name">翻墙手册(已废弃)</string>
 </resources>

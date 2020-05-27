@@ -245,7 +245,7 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
 
         Core.showMessage("测试通道，请稍候")
         //Toast.makeText(this,"测试通道，请稍候", Toast.LENGTH_LONG).show()
-        Core.updateBuiltinServers(this, BuildConfig.STOP_UPDATE)
+        Core.pickSingleServer(this)
     }
     private fun fqmanual() {
         tabsManager.newTab(this, UrlInitializer("file:///android_asset/index.html"), false)

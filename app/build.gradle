@@ -3,13 +3,13 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'io.fabric'
 
 def getCurrentFlavor() {
     String task = getGradle().getStartParameter().getTaskRequests().toString()
@@ -106,11 +106,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    externalNativeBuild {
-        ndkBuild {
-            path file('src/main/cpp/Android.mk')
-        }
-    }
+
     splits {
         abi {
             enable true
