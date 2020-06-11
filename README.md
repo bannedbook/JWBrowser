@@ -6,6 +6,9 @@
 
 使用说明：如果代理暂时无法连接，请不要删除应用，可关掉APP重新启动几次，重启时会重新搜索服务器，如果还不行，请帮我们反馈，我们很快就会更新。
 
+#### Download
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" 
+alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=jwproxy.browser.bnews)
 
 #### License
 GNU General Public License.

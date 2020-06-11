@@ -53,3 +53,4 @@ out
 # https://gitlab.com/fdroid/fdroidclient/raw/master/.gitignore
 gitupdate.*
 *.iml
+*.aar

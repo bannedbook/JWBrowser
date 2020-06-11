@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+<!--    android:layout_above="@id/adDividerLine"-->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:layout_above="@id/adDividerLine"
     android:id="@+id/coordinator_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -55,7 +54,7 @@
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <View android:id="@+id/adDividerLine"
+<!--    <View android:id="@+id/adDividerLine"
         android:layout_above="@id/adView"
         android:layout_width="match_parent"
         android:layout_height="5dp"
@@ -69,5 +68,5 @@
         android:layout_gravity="bottom"
         android:background="@android:color/transparent"
         app:adSize="SMART_BANNER"
-        app:adUnitId="@string/adUnitId" />
+        app:adUnitId="@string/adUnitId" />-->
 </RelativeLayout>

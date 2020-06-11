@@ -33,8 +33,6 @@ android {
     sourceSets {
         jwproxy.setRoot('src/jwproxy')
         hxnews.setRoot('src/hxnews')
-        fanqiangmanual.setRoot('src/fanqiangmanual')
-        jinwang.setRoot('src/jinwang')
     }
     productFlavors {
         jwproxy {
@@ -49,20 +47,6 @@ android {
             buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
             buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"true\")"
             applicationId "org.bnews.app"
-            versionCode rootProject.versionCode
-        }
-        fanqiangmanual {
-            dimension "capabilities"
-            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
-            buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"true\")"
-            applicationId "org.bannedbook.fanqiangmanual"
-            versionCode rootProject.versionCode
-        }
-        jinwang {
-            dimension "capabilities"
-            buildConfigField "boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")"
-            buildConfigField "boolean", "STOP_UPDATE", "Boolean.parseBoolean(\"false\")"
-            applicationId "org.mobile.jinwang"
             versionCode rootProject.versionCode
         }
     }
@@ -201,7 +185,7 @@ dependencies {
     //firebase
     //implementation 'com.google.firebase:firebase-analytics:17.2.1'
     //implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.android.gms:play-services-ads:18.3.0'
+    implementation 'com.google.android.gms:play-services-ads:19.1.0'
 }
 
 kapt {

@@ -4,6 +4,7 @@
 
 package acr.browser.lightning.browser.activity
 
+import SpeedUpVPN.VpnEncrypt
 import acr.browser.lightning.AppTheme
 import acr.browser.lightning.BuildConfig
 import acr.browser.lightning.IncognitoActivity
@@ -85,9 +86,7 @@ import androidx.palette.graphics.Palette
 import butterknife.ButterKnife
 import com.anthonycr.grant.PermissionsManager
 import com.github.shadowsocks.Core
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.*
 import io.reactivex.Completable
 import io.reactivex.Scheduler
 import io.reactivex.rxkotlin.subscribeBy
@@ -203,17 +202,12 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
      * An observable which asynchronously updates the user's cookie preferences.
      */
     protected abstract fun updateCookiePreference(): Completable
-
+    private lateinit var mInterstitialAd: InterstitialAd
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         injector.inject(this)
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
-
-        //MobileAds.initialize(this) {}
-        //var mAdView: AdView = findViewById(R.id.adView)
-        //val adRequest = AdRequest.Builder().build()
-        //mAdView.loadAd(adRequest)
 
         if (isIncognito()) {
             incognitoNotification = IncognitoNotification(this, notificationManager)
@@ -246,6 +240,20 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         Core.showMessage("测试通道，请稍候")
         //Toast.makeText(this,"测试通道，请稍候", Toast.LENGTH_LONG).show()
         Core.pickSingleServer(this)
+
+        MobileAds.initialize(this) {}
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = "ca-app-pub-2194043486084479/6047208143"
+        //mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"  //test ads
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+        mInterstitialAd.adListener = object : AdListener() {
+            override fun onAdClosed() {
+                mInterstitialAd.loadAd(AdRequest.Builder().build())
+            }
+        }
+        //var mAdView: AdView = findViewById(R.id.adView)
+        //val adRequest = AdRequest.Builder().build()
+        //mAdView.loadAd(adRequest)
     }
     private fun fqmanual() {
         tabsManager.newTab(this, UrlInitializer("file:///android_asset/index.html"), false)
@@ -1227,6 +1235,20 @@ abstract class BrowserActivity : ThemableBrowserActivity(), BrowserView, UIContr
         if (url == null || searchView?.hasFocus() != false) {
             return
         }
+
+        val zxsites = arrayOf("falundafa.org","bannedbook.org","shenyun.com","shenyunperformingarts.org",
+            "minghui.org","zhengjian.org","epochtimes.com", "ntdtv.com","soundofhope.org","secretchina.com",
+             "aboluowang.com","xinsheng.net","renminbao.com","mhradio.org","dongtaiwang.com", "wujieliulan.com"
+        )
+        val match = zxsites.filter { it in url }
+        if (isLoading && match.isNullOrEmpty()) {
+            //Log.e("updateUrl",VpnEncrypt.newsClickCount.toString() +":"+ isLoading.toString() +":"+ url)
+            VpnEncrypt.newsClickCount++
+            if (VpnEncrypt.newsClickCount%18==0L && mInterstitialAd.isLoaded) {
+                mInterstitialAd.show()
+            }
+        }
+
         val currentTab = tabsManager.currentTab
         bookmarksView?.handleUpdatedUrl(url)
 
