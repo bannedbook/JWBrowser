@@ -32,11 +32,11 @@ import android.os.Build
 import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants
+import android.util.Base64
 import android.util.Log
 import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.preference.Preference
-import com.crashlytics.android.Crashlytics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -143,11 +143,21 @@ fun Resources.Theme.resolveResourceId(@AttrRes resId: Int): Int {
 val Intent.datas get() = listOfNotNull(data) + (clipData?.asIterable()?.mapNotNull { it.uri } ?: emptyList())
 
 fun printLog(t: Throwable) {
-    Crashlytics.logException(t)
+    //Crashlytics.logException(t)
     Log.e("Utils","printLog",t)
     t.printStackTrace()
 }
+fun printLog(s: String) {
+    Log.e("printLog",s)
+}
+fun printLog(logLever:Int,tag:String,s: String?) {
+    if(s.isNullOrEmpty())return;
+    if (logLever==Log.WARN)
+        Log.w(tag,s)
+    if (logLever==Log.ERROR)
+        Log.e(tag,s)
 
+}
 fun Preference.remove() = parent!!.removePreference(this)
 
 /**
@@ -275,4 +285,16 @@ private fun Float.toShortString(): String {
     if (s.length <= 4)
         return s
     return s.substring(0, 4).removeSuffix(".")
+}
+
+/**
+ * base64 encode
+ */
+fun encodeForVmess(text: String): String {
+    try {
+        return Base64.encodeToString(text.toByteArray(charset("UTF-8")), Base64.NO_WRAP)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return ""
+    }
 }

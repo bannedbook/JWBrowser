@@ -22,7 +22,6 @@ import android.os.Process
 import android.os.StrictMode
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatDelegate
-import com.crashlytics.android.Crashlytics
 import com.github.shadowsocks.Core
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Scheduler
@@ -69,7 +68,7 @@ class BrowserApp : Application() {
             val processName = getProcessName(this)
             val packageName = this.packageName
             if (packageName != processName) {
-                WebView.setDataDirectorySuffix(processName)
+                WebView.setDataDirectorySuffix(processName?:"")
             }
         }
         //fix for Android 9 prohibit sharing WebView data directory end

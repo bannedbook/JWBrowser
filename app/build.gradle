@@ -21,7 +21,6 @@ def getCurrentFlavor() {
 }
 android {
     compileSdkVersion project.targetSdkVersion
-    buildToolsVersion project.buildToolsVersion
     archivesBaseName = "JWBrowser"
     defaultConfig {
         minSdkVersion project.minSdkVersion
